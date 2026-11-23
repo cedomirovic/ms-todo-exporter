@@ -191,6 +191,13 @@ code {
   flex: 0 0 auto;
 }
 
+.ms-badge__logo {
+  display: block;
+  flex: 0 0 auto;
+  width: 24px;
+  height: 24px;
+}
+
 .topbar__actions {
   display: flex;
   align-items: center;
@@ -839,6 +846,58 @@ summary:focus-visible,
   border: 1px solid var(--border-strong);
   border-radius: 12px;
   box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+}
+
+/* ------------------------------------------------------------------ */
+/* Uspešan export + konfete                                           */
+/* ------------------------------------------------------------------ */
+
+.export-success {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-top: 1rem;
+  padding: 0.8rem 1rem;
+  border: 1px solid color-mix(in oklch, var(--good) 45%, transparent);
+  border-radius: 14px;
+  background: color-mix(in oklch, var(--good) 12%, var(--card));
+  font-size: 0.9rem;
+  font-weight: 550;
+}
+
+.export-success__icon {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--good);
+  color: #06281c;
+}
+
+.export-success.is-in {
+  animation: success-pop 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+}
+
+@keyframes success-pop {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.confetti-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 1000;
 }
 
 /* ------------------------------------------------------------------ */

@@ -14,6 +14,7 @@ import { createZip } from './zip.js';
 import { getLang, setLang, translateDocument, t } from './i18n.js';
 import { getTheme, setTheme, applyTheme } from './theme.js';
 import { escapeHtml } from './exporters/shared.js';
+import { burstConfetti } from './confetti.js';
 
 const $ = (id) => document.getElementById(id);
 
@@ -23,6 +24,7 @@ const state = {
   selected: new Set(DEFAULT_FORMAT_IDS),
   busy: false,
   toastTimer: null,
+  lastExport: null,
   lang: getLang(),
   theme: getTheme(),
 };
@@ -219,6 +221,9 @@ function renderData() {
   const data = state.data;
   if (!data) return;
 
+  state.lastExport = null;
+  $('export-success').hidden = true;
+
   $('connect-card').hidden = true;
   $('export-card').hidden = false;
 
@@ -372,6 +377,9 @@ async function exportSelected() {
   const date = new Date().toISOString().slice(0, 10);
   const base = safeFilename(`ms-todo-${state.data.account?.username || 'export'}-${date}`);
 
+  state.lastExport = null;
+  $('export-success').hidden = true;
+
   setBusy(true);
   try {
     const files = chosen.map((exporter) => ({
@@ -382,19 +390,42 @@ async function exportSelected() {
 
     if (files.length === 1) {
       downloadFile(files[0].name, files[0].data, files[0].mime);
-      $('setup').hidden = true;
-      toast(t(state.lang, 'toasts.exportSingle'));
+      showExportSuccess({ count: 1, name: files[0].name });
     } else {
       downloadFile(`${base}.zip`, createZip(files), 'application/zip');
-      $('setup').hidden = true;
-      toast(t(state.lang, 'toasts.exportMany', { n: files.length }));
+      showExportSuccess({ count: files.length });
     }
+
+    $('setup').hidden = true;
+    burstConfetti();
+    toast(
+      files.length === 1
+        ? t(state.lang, 'toasts.exportSingle')
+        : t(state.lang, 'toasts.exportMany', { n: files.length }),
+    );
   } catch (error) {
     console.error(error);
     showStatus('error', t(state.lang, 'errors.load'), `${t(state.lang, 'errors.exportFailed')}: ${error.message}`);
   } finally {
     setBusy(false);
   }
+}
+
+function exportSuccessText(info) {
+  return info.count === 1
+    ? t(state.lang, 'export.successSingle')
+    : t(state.lang, 'export.successMany', { n: info.count });
+}
+
+function showExportSuccess(info) {
+  state.lastExport = info;
+  const box = $('export-success');
+  $('export-success-text').textContent = exportSuccessText(info);
+  box.hidden = false;
+  box.classList.remove('is-in');
+  void box.offsetWidth;
+  box.classList.add('is-in');
+  box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
 function handleSignOut() {
@@ -444,6 +475,9 @@ function changeLanguage(lang) {
   renderFormats();
   renderConfigState();
   updatePreview();
+  if (!$('export-success').hidden && state.lastExport) {
+    $('export-success-text').textContent = exportSuccessText(state.lastExport);
+  }
 }
 
 /* ------------------------------------------------------------------ */
