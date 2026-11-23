@@ -19,10 +19,10 @@ Radi u browseru, bez backend-a: prijaviš se svojim Microsoft nalogom, izabereš
 Aplikacija je dizajnirana prema vizuelnom identitetu [Growit](https://growitagile.com/) — fontovi
 Outfit (naslov) + Inter (tekst), zeleni (lime) akcenat, krem/tamni paleta, pilničaste (pill) dugmad.
 
-- **Temama**: svijetlo / tamno. Izbor se čuva u `localStorage` ključu `mstodo.theme`
-  (default: `prefers-color-scheme`).
-- **Jezici**: srpski (default) i engleski. Izbor se čuva u `localStorage` ključu `mstodo.lang`
-  (default: `sr` za srpski browser, `en` za ostale).
+- **Temama**: svetlo / tamno. Izbor se čuva u `localStorage` ključu `mstodo.theme`
+  (default: tamna).
+- **Jezici**: srpski i engleski. Izbor se čuva u `localStorage` ključu `mstodo.lang`
+  (default: engleski).
 
 Topbar na gornjoj strani sadrži **segment za izbor jezika** (SR / EN) i **dugme za temu**. Svi tekstovi
 u UI-u i u izveženim fajlovima prate izabran jezik.
@@ -87,6 +87,10 @@ window.MS_TODO_EXPORT_CONFIG = {
 
 Ako `config.js` nije popunjen, aplikacija prikazuje polje za client ID i pamti ga u
 `localStorage` — korisno za brzi lokalni test.
+
+Kada je `clientId` popunjen (produkcija), posetioci **ne vide nikakvo podešavanje** — samo
+dugme „Sign in with Microsoft account". Dovoljno je da vlasnik jednom upiše client ID i
+svako može da se prijavi i izveze svoje liste.
 
 > **Napomena za poslovne naloge:** neki tenanti blokiraju korisnički pristanak.
 > U tom slučaju administrator mora da odobri `Tasks.Read` za ovu aplikaciju.

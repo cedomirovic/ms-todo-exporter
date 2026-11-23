@@ -1,4 +1,4 @@
-import { getClientId, setClientId, getRedirectUri } from './config.js';
+import { getClientId, setClientId, getRedirectUri, isClientIdLocked } from './config.js';
 import {
   beginLogin,
   completeLogin,
@@ -196,16 +196,18 @@ function renderFormats() {
 
 function renderConfigState() {
   const hasClientId = Boolean(state.clientId);
-  $('setup').hidden = hasClientId;
+  const locked = isClientIdLocked();
+
+  $('setup').hidden = hasClientId || locked;
 
   const input = $('client-id');
   if (!input.value && hasClientId) input.value = state.clientId;
 
-  const withClientId = hasClientId;
-  $('signin-hint').textContent = withClientId
+  $('signin-hint').hidden = locked;
+  $('signin-hint').textContent = hasClientId
     ? t(state.lang, 'connect.hint.withClient')
     : t(state.lang, 'connect.hint.withoutClient');
-  $('btn-change-client').hidden = !hasClientId;
+  $('btn-change-client').hidden = !hasClientId || locked;
 
   $('btn-signin').textContent = t(state.lang, 'connect.signIn');
   $('btn-demo').textContent = t(state.lang, 'connect.demo');
@@ -338,6 +340,8 @@ async function signIn() {
 }
 
 function saveClient() {
+  if (isClientIdLocked()) return;
+
   const value = $('client-id').value.trim();
 
   if (!value) {
