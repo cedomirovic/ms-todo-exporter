@@ -115,14 +115,24 @@ async function loadFromGraph() {
       },
     });
 
+    if (data.stopped && data.lists.length === 0) {
+      hideStatus();
+      toast(t(state.lang, 'status.stopped'));
+      return;
+    }
+
     state.data = data;
     hideStatus();
     renderData();
-    toast(
-      data.lists.length
-        ? t(state.lang, 'toasts.loadedTasks', { lists: data.lists.length, tasks: data.lists.reduce((sum, list) => sum + list.tasks.length, 0) })
-        : t(state.lang, 'toasts.loaded', { lists: data.lists.length }),
-    );
+    if (data.stopped) {
+      toast(t(state.lang, 'status.stopped'));
+    } else {
+      toast(
+        data.lists.length
+          ? t(state.lang, 'toasts.loadedTasks', { lists: data.lists.length, tasks: data.lists.reduce((sum, list) => sum + list.tasks.length, 0) })
+          : t(state.lang, 'toasts.loaded', { lists: data.lists.length }),
+      );
+    }
   } catch (error) {
     if (error?.name === 'AbortError') {
       hideStatus();
@@ -492,8 +502,8 @@ function syncButtons() {
   $('btn-refresh').disabled = busy || !hasData;
   $('btn-signout').disabled = busy || !hasData;
   $('btn-new-profile').disabled = busy;
-  $('btn-cancel').disabled = busy;
-  $('btn-stop').disabled = busy;
+  $('btn-cancel').disabled = !busy;
+  $('btn-stop').disabled = !busy;
 }
 
 function showStatus(kind, title, detail = '', ratio) {

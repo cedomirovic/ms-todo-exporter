@@ -68,6 +68,7 @@ async function graphFetch(path, getToken, attempt = 0) {
  */
 export function cancelPending() {
   skipRequested = true;
+  activeController?.abort();
 }
 
 /**
@@ -76,6 +77,10 @@ export function cancelPending() {
 export function stopImport() {
   stopRequested = true;
   activeController?.abort();
+}
+
+function isAbortError(error) {
+  return error?.name === 'AbortError' || error?.name === 'TimeoutError';
 }
 
 async function getAll(path, getToken) {
@@ -246,12 +251,33 @@ export async function fetchTodoData({
   skipRequested = false;
   stopRequested = false;
 
+  const finish = (me, lists, processedTasks) => ({
+    exportedAt: new Date().toISOString(),
+    stopped: stopRequested,
+    account: {
+      displayName: me?.displayName || me?.userPrincipalName || 'Microsoft nalog',
+      username: me?.userPrincipalName || me?.mail || '',
+      source: 'graph',
+    },
+    lists,
+  });
+
   onProgress({ message: t(currentLang, 'status.loadingProfile'), ratio: 0.02 });
 
-  const me = await graphFetch('/me?$select=displayName,userPrincipalName,mail', getToken);
+  let me = null;
+  let rawLists = [];
 
-  onProgress({ message: t(currentLang, 'status.loadingLists'), ratio: 0.06 });
-  const rawLists = await getAll(`/me/todo/lists?$top=100`, getToken);
+  try {
+    me = await graphFetch('/me?$select=displayName,userPrincipalName,mail', getToken);
+
+    onProgress({ message: t(currentLang, 'status.loadingLists'), ratio: 0.06 });
+    rawLists = await getAll(`/me/todo/lists?$top=100`, getToken);
+  } catch (error) {
+    if (stopRequested && isAbortError(error)) return finish(null, [], 0);
+    throw error;
+  }
+
+  if (stopRequested) return finish(me, [], 0);
 
   const lists = [];
   let processedTasks = 0;
@@ -280,20 +306,31 @@ export async function fetchTodoData({
         getToken,
       );
     } catch (error) {
-      // Jedna nepristupačna lista (npr. tuđa deljena lista) ne treba da obori ceo export.
       if (error.status === 401) throw error;
+
+      if (isAbortError(error)) {
+        if (stopRequested) break;
+        if (skipRequested) {
+          skipRequested = false;
+          continue;
+        }
+      }
+
+      // Jedna nepristupačna lista (npr. tuđa deljena lista) ne treba da obori ceo export.
       console.warn(`Lista "${list.name}" nije učitana:`, error);
     }
 
     list.tasks = rawTasks.map(normalizeTask);
 
-    if (includeChecklist && list.tasks.length) {
+    if (includeChecklist && list.tasks.length && !stopRequested && !skipRequested) {
       onProgress({
         message: t(currentLang, 'status.loadingChecklist', { name: list.name }),
         ratio: 0.1 + (0.8 * (index + 0.5)) / Math.max(rawLists.length, 1),
       });
 
       await mapLimit(list.tasks, 4, async (task) => {
+        if (stopRequested || skipRequested) return;
+
         try {
           const items = await getAll(
             `/me/todo/lists/${encodeURIComponent(rawList.id)}/tasks/${encodeURIComponent(task.id)}` +
@@ -314,17 +351,12 @@ export async function fetchTodoData({
 
     processedTasks += list.tasks.length;
     lists.push(list);
+
+    if (stopRequested) break;
+    if (skipRequested) skipRequested = false;
   }
 
   onProgress({ message: t(currentLang, 'status.done', { lists: lists.length, tasks: processedTasks }), ratio: 1 });
 
-  return {
-    exportedAt: new Date().toISOString(),
-    account: {
-      displayName: me.displayName || me.userPrincipalName || 'Microsoft nalog',
-      username: me.userPrincipalName || me.mail || '',
-      source: 'graph',
-    },
-    lists,
-  };
+  return finish(me, lists, processedTasks);
 }

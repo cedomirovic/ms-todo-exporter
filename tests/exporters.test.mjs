@@ -107,7 +107,7 @@ const data = {
   ],
 };
 
-const defaultOptions = { includeCompleted: true, includeChecklist: true, includeNotes: true };
+const defaultOptions = { includeCompleted: true, includeChecklist: true, includeNotes: true, lang: 'sr' };
 const totalTasks = data.lists.reduce((sum, list) => sum + list.tasks.length, 0);
 
 test('registar sadrži svih šest formata', () => {
@@ -186,6 +186,16 @@ test('TXT sadrži markere i detalje', () => {
   assert.ok(txt.includes('[x] Završen zadatak'));
   assert.ok(txt.includes('Rok:'));
   assert.ok(txt.includes('Podzadaci:'));
+});
+
+test('podrazumevani jezik izvoza je engleski', () => {
+  const txt = getExporter('txt').build(data, {
+    includeCompleted: true,
+    includeChecklist: true,
+    includeNotes: true,
+  });
+  assert.ok(txt.includes('Due:'));
+  assert.ok(txt.includes('Subtasks:'));
 });
 
 test('ICS je RFC 5545 kompatibilan i filtrira zadatke bez roka', () => {

@@ -172,6 +172,25 @@ code {
   color: var(--lime);
 }
 
+.ms-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin-bottom: 1rem;
+  padding: 0.35rem 0.8rem 0.35rem 0.42rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: color-mix(in oklch, var(--card-2) 70%, transparent);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.ms-badge svg {
+  display: block;
+  flex: 0 0 auto;
+}
+
 .topbar__actions {
   display: flex;
   align-items: center;

@@ -1,12 +1,12 @@
 <!doctype html>
-<html lang="sr" data-theme="dark">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title data-i18n="app.title">Microsoft To Do Export</title>
-  <meta name="description" content="Izvezi Microsoft To Do liste u JSON, Markdown, CSV, HTML, ICS ili TXT. Sve se dešava u tvom browseru — bez servera." />
+  <meta name="description" content="Export your Microsoft To Do lists to JSON, Markdown, CSV, HTML, ICS or TXT. Everything happens in your browser — no server." />
   <meta name="color-scheme" content="dark" />
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23a6e45a'/%3E%3Cpath d='M18 33l9 9 19-20' fill='none' stroke='%230b0e08' stroke-width='6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%232564cf'/%3E%3Cpath d='M18 33l9 9 19-20' fill='none' stroke='%23ffffff' stroke-width='6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
   <link rel="stylesheet" href="./styles.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -16,12 +16,12 @@
       var theme = localStorage.getItem('mstodo.theme');
       if (theme !== 'dark' && theme !== 'light') theme = 'dark';
       var lang = localStorage.getItem('mstodo.lang');
-      if (lang !== 'sr' && lang !== 'en') lang = 'sr';
+      if (lang !== 'sr' && lang !== 'en') lang = 'en';
       document.documentElement.dataset.theme = theme;
       document.documentElement.lang = lang;
     } catch (e) {
       document.documentElement.dataset.theme = 'dark';
-      document.documentElement.lang = 'sr';
+      document.documentElement.lang = 'en';
     }
   </script>
 </head>
@@ -39,8 +39,8 @@
 
       <div class="topbar__actions">
         <div class="seg" id="lang-switch" role="group" aria-label="Jezik / Language">
-          <button class="seg__btn is-active" data-lang="sr" type="button">SR</button>
-          <button class="seg__btn" data-lang="en" type="button">EN</button>
+          <button class="seg__btn" data-lang="sr" type="button">SR</button>
+          <button class="seg__btn is-active" data-lang="en" type="button">EN</button>
         </div>
 
         <button class="icon-btn" id="theme-toggle" type="button" aria-label="Promijeni temu / Toggle theme">
@@ -64,6 +64,20 @@
     <main class="stack">
       <section class="card connect-card" id="connect-card">
         <p class="kicker" data-i18n="connect.kicker">Besplatno, svi podaci ostaju kod tebe.</p>
+
+        <div class="ms-badge">
+          <svg viewBox="0 0 48 48" width="22" height="22" aria-hidden="true">
+            <defs>
+              <linearGradient id="msTodoLogo" x1="4" y1="4" x2="44" y2="44" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#50A0F0" />
+                <stop offset="1" stop-color="#2564CF" />
+              </linearGradient>
+            </defs>
+            <rect width="48" height="48" rx="11" fill="url(#msTodoLogo)" />
+            <path d="M14 25.5 21 32.5 34 17.5" fill="none" stroke="#ffffff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+          <span>Microsoft To Do</span>
+        </div>
 
         <h1 class="connect__title" data-i18n-html="connect.title">Sve tvoje Microsoft To Do<br><span class="hl">zadatke</span>, eksportuj u bilo kom formatu.</h1>
 
@@ -176,7 +190,7 @@
     </main>
 
     <footer class="footer muted">
-      <span data-i18n="footer.privacy">Bez kolačica za praćenje · bez analitike · otvoren kod</span>
+      <span data-i18n-html="footer.privacy">Bez kolačica za praćenje · bez analitike · otvoren kod</span>
       <span class="footer__sep" aria-hidden="true"> · </span>
       <span data-i18n="footer.createdBy">Napravljeno od Growit</span>
       <span class="footer__sep" aria-hidden="true"> · </span>

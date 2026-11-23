@@ -4,6 +4,8 @@ Statična web aplikacija koja izvozi tvoje **Microsoft To Do** liste u šest for
 
 **Live:** https://cedomirovic.github.io/ms-todo-exporter/
 
+![MS To Do Exporter — screenshot](docs/screenshot.png)
+
 Radi u browseru, bez backend-a: prijaviš se svojim Microsoft nalogom, izabereš format i preuzmeš fajl.
 
 - ✅ Lični nalozi (`outlook.com`, `hotmail.com`, `live.com`)

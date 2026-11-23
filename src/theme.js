@@ -13,13 +13,6 @@ export function getTheme() {
   } catch {
     /* ignore */
   }
-  if (
-    typeof window !== 'undefined' &&
-    typeof window.matchMedia === 'function' &&
-    window.matchMedia('(prefers-color-scheme: light)').matches
-  ) {
-    return 'light';
-  }
   return DEFAULT_THEME;
 }
 

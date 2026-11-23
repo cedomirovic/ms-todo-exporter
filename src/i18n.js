@@ -4,7 +4,7 @@
  */
 
 export const LANGS = ['sr', 'en'];
-export const DEFAULT_LANG = 'sr';
+export const DEFAULT_LANG = 'en';
 export const LANG_KEY = 'mstodo.lang';
 
 const dict = {
@@ -55,6 +55,7 @@ const dict = {
       loadingTasks: 'Učitavam zadatke za {name}…',
       loadingChecklist: 'Učitavam podzadatke za {name}…',
       done: 'Gotovo — {lists} listi, {tasks} zadataka.',
+      stopped: 'Import je zaustavljen.',
       cancel: 'Preskoči listu',
       stop: 'Stop',
     },
@@ -117,7 +118,10 @@ const dict = {
         'Microsoft je oficialno objavio da se Microsoft To Do gasi — aplikacije će stati 30. juna 2027. Sledeći korak: preuzmi svoje zadatke prema nekom formatu. <a href="https://support.microsoft.com/en-au/planner/to-do-to-planner" target="_blank" rel="noreferrer">Službena objava</a>',
       ],
     },
-    footer: { privacy: 'Bez kolačica za praćenje · bez analitike · otvoren kod', createdBy: 'Napravljeno od Growit' },
+    footer: {
+      privacy: 'Bez kolačica za praćenje · bez analitike · <a href="https://github.com/cedomirovic/ms-todo-exporter/blob/main/LICENSE" target="_blank" rel="noreferrer">otvoren kod</a>',
+      createdBy: 'Napravljeno od Growit',
+    },
     toasts: {
       loaded: 'Učitano: {lists} listi.',
       loadedTasks: 'Učitano: {lists} listi, {tasks} zadataka.',
@@ -226,6 +230,7 @@ const dict = {
       loadingTasks: 'Loading tasks for {name}…',
       loadingChecklist: 'Loading subtasks for {name}…',
       done: 'Done — {lists} lists, {tasks} tasks.',
+      stopped: 'Import stopped.',
       cancel: 'Skip this list',
       stop: 'Stop import',
     },
@@ -288,7 +293,10 @@ const dict = {
         'Microsoft officially announced that Microsoft To Do is shutting down — the apps will be retired on June 30, 2027. Next step: export your tasks to another format. <a href="https://support.microsoft.com/en-au/planner/to-do-to-planner" target="_blank" rel="noreferrer">Official announcement</a>',
       ],
     },
-    footer: { privacy: 'No tracking cookies · no analytics · open source', createdBy: 'Created by Growit' },
+    footer: {
+      privacy: 'No tracking cookies · no analytics · <a href="https://github.com/cedomirovic/ms-todo-exporter/blob/main/LICENSE" target="_blank" rel="noreferrer">open source</a>',
+      createdBy: 'Created by Growit',
+    },
     toasts: {
       loaded: 'Loaded: {lists} lists.',
       loadedTasks: 'Loaded: {lists} lists, {tasks} tasks.',
@@ -359,9 +367,7 @@ export function getLang() {
   } catch {
     /* ignore */
   }
-  if (typeof navigator === 'undefined' || typeof navigator.language !== 'string') return DEFAULT_LANG;
-  if (navigator.language.toLowerCase().startsWith('sr')) return 'sr';
-  return 'en';
+  return DEFAULT_LANG;
 }
 
 export function setLang(lang) {
